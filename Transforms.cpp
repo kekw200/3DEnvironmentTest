@@ -1,18 +1,26 @@
-#include "Transforms.h"
+// GLM includes
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+// C/C++ includes
 #include <cstdint>
 #include <cmath>
 #include <tuple>
 #include <vector>
 
+// Own includes
+#include "Transforms.h"
+
 // All this could probably be done by the vertex shader, will be moved over if I get it working here first
 
-void Transforms::OriginTransform(float* vertices, uint16_t length, std::tuple<float, float, float> cameraPosition)
+void Transforms::OriginTransform(float* vertices, uint16_t length, glm::vec3 cameraPosition)
 {
 	for (int i = 0; i < length; i += 3)
 	{
-		vertices[i + 0] -= std::get<0>(cameraPosition);
-		vertices[i + 1] -= std::get<1>(cameraPosition);
-		vertices[i + 2] -= std::get<2>(cameraPosition);
+		vertices[i + 0] -= cameraPosition.x;
+		vertices[i + 1] -= cameraPosition.y;
+		vertices[i + 2] -= cameraPosition.z;
 	}
 }
 
@@ -27,26 +35,15 @@ void Transforms::PerspectiveTransform(float* vertices, uint16_t length, float vi
 	float viewStart = 0.1;
 	float startHorizontalSpan = 0.3;
 	float startVerticalSpan = 0.3;
-	
-	// std::tuple<float, float, float> lustart = { -startHorizontalSpan, startVerticalSpan, viewStart };
-	// std::tuple<float, float, float> llstart = { -startHorizontalSpan, -startVerticalSpan, viewStart };
-	// std::tuple<float, float, float> rustart = { startHorizontalSpan, startVerticalSpan, viewStart };
-	// std::tuple<float, float, float> rlstart = { startHorizontalSpan, -startVerticalSpan, viewStart };
 
-	// viewEnd
 	float endHorizontalSpan = 20;
 	float endVerticalSpan = 20;
-	// std::tuple<float, float, float> luend = { -endHorizontalSpan, endVerticalSpan, viewEnd };
-	// std::tuple<float, float, float> llend = { -endHorizontalSpan, -endVerticalSpan, viewEnd };
-	// std::tuple<float, float, float> ruend = { endHorizontalSpan, endVerticalSpan, viewEnd };
-	// std::tuple<float, float, float> rlend = { endHorizontalSpan, -endVerticalSpan, viewEnd };
 	float horizontalChange = endHorizontalSpan - startHorizontalSpan;
 	float verticalChange = endVerticalSpan - startVerticalSpan;
 	
 	for (int i = 0; i < length; i += 3)
 	{
 		float zDist = vertices[i + 2] / viewDistance;
-		// float dist = sqrt(pow(vertices[0 + i], 2) + pow(vertices[1 + i], 2) + pow(vertices[2 + i], 2));
 		float xScale = startVerticalSpan + verticalChange * zDist;
 		float yScale = startHorizontalSpan + horizontalChange * zDist;
 

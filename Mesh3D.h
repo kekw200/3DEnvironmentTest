@@ -47,5 +47,5 @@ public:
 	void LoadExternalShaders(unsigned int shaderProgram);
 	void DeleteShaders();
 	bool Draw();
-	bool Draw2();
+	unsigned int GetVAO();
 };

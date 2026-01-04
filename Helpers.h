@@ -8,6 +8,7 @@
 // C includes
 #include <string.h>
 
+// probably delete
 typedef struct triangleStruct {
 	std::tuple<float, float, float> A;
 	std::tuple<float, float, float> B;

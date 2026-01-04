@@ -12,7 +12,7 @@ using namespace std;
 
 Mesh3D::Mesh3D()
 {
-	this->SetupBuffers();
+	
 }
 
 Mesh3D::~Mesh3D()
@@ -43,9 +43,12 @@ bool Mesh3D::SetVertices(float* vertices, uint16_t length)
 
 	if (_lengthVertices != length)
 	{
+		glBindVertexArray(_VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, _vertexPositionBuffer);
 		glBufferData(GL_ARRAY_BUFFER, length * floatsize, NULL, GL_DYNAMIC_DRAW);
+		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	}
 
 	_lengthVertices = length;
@@ -63,9 +66,11 @@ bool Mesh3D::SetFaces(unsigned int* faces, uint16_t length)
 
 	if (_lengthFaces != length)
 	{
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
+		glBindVertexArray(_VAO);
+		// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, length * sizeof(unsigned int), faces, GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 	}
 
 	_lengthFaces = length;
@@ -107,8 +112,8 @@ void Mesh3D::SetupBuffers()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
 	
 	glBindVertexArray(0);
-	// glBindBuffer(GL_ARRAY_BUFFER, 0);
-	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void Mesh3D::DeleteBuffers()
@@ -186,25 +191,14 @@ bool Mesh3D::Draw()
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	
 	glDrawElements(GL_TRIANGLES, _lengthFaces, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 	return true;
 }
 
-bool Mesh3D::Draw2() {
-	if (!_initializedVertices) { return false; }
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, 9 * floatsize, transformedVertices, GL_STATIC_DRAW);
-
-	glUseProgram(_shaderProgram);
-	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+unsigned int Mesh3D::GetVAO()
+{
+	return _VAO;
 }
-
 
 const unsigned int Mesh3D::GetShaderProgram()
 {

@@ -16,8 +16,31 @@
 bool load_compile_shader(GLenum shaderType, const char* filename, unsigned int& shader)
 {
 	shader = glCreateShader(shaderType);
-	const char* shaderSource = read_file_into_chararray(filename);
-	// std::cout << shaderSource << std::endl;
+	const GLchar* shaderSource = nullptr;
+	// const char* shaderSource = read_file_into_chararray(filename);
+	if (shaderType == GL_FRAGMENT_SHADER) {
+		shaderSource = R"END(
+		#version 440 core
+		out vec4 FragColor;
+
+		void main()
+		{
+			FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+		}
+		)END";
+	}
+	else {
+		shaderSource = R"END(
+		#version 440 core
+		layout (location = 0) in vec3 aPos;
+
+		void main()
+		{
+			gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+		}
+		)END";
+	}
+		// std::cout << shaderSource << std::endl;
 	if (shaderSource == NULL)
 	{
 		glfwTerminate();

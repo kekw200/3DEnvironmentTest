@@ -17,4 +17,6 @@ Movement and drawing of crudely represented meshes is working.
 
 (Basically fix up all the improvised spaghetti)
 
-Then will start working on the rest like textures, ligthing, interactivity and so on.
+Also there's some weird behavior when vertices pass behind the camera, whole thing ends up getting flipped (negative z axis in OpenGL does that I guess?), will see if it persists after point 1 of todos.
+
+Then will start working on the rest like textures, lighting, interactivity and so on.
